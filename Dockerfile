@@ -1,5 +1,11 @@
-ARG     BASE_IMAGE=$BASE_IMAGE
-FROM    $BASE_IMAGE AS tinyssh
+ARG     BASE_IMG=$BASE_IMG
+FROM    $BASE_IMG AS base
+
+RUN     apk --update --no-cache upgrade
+
+
+
+FROM    base as build
 
 WORKDIR	/rootfs
 
@@ -22,8 +28,8 @@ RUN     apk --update --no-cache --root /rootfs --initdb add \
 
 
 #FROM	scratch
-FROM	$BASE_IMAGE
+FROM	$BASE_IMG 
 
-COPY	--from=tinyssh /rootfs/ /
+COPY	--from=build /rootfs/ /
 
 CMD	[ "/usr/sbin/dropbear", "-R", "-F", "-E" ]
